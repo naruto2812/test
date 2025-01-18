@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz By Soham </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header .logo {
+            width: 40px; /* Adjust logo size */
+            height: auto;
+            margin-right: 10px;
+        }
+        .header .title {
+            font-size: 20px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .header .timer {
+            font-size: 18px;
+        }
+        .container {
+            margin: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .question-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+        }
+        .instructions {
+            background-color: #e9f5ff;
+            padding: 10px;
+            border-left: 5px solid #007bff;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .save {
+            background-color: #007bff;
+            color: white;
+        }
+        .review {
+            background-color: #ffc107;
+            color: black;
+        }
+        .clear {
+            background-color: #dc3545;
+            color: white;
+        }
+        .prev {
+            background-color: #6c757d;
+            color: white;
+        }
+        .save:hover, .review:hover, .clear:hover, .prev:hover {
+            opacity: 0.9;
+        }
+        .options {
+            margin: 10px 0;
+        }
+        .options label {
+            margin-right: 20px;
+        }
+    </style>
+    <script>
+        let timer;
+        let timeRemaining = 29 * 60 + 41; // 29:41 in seconds
+        let currentQuestion = 1;
+
+        const questions = [
+            {
+                text: "A solid sphere of mass M and radius R rolls down an inclined plane without slipping. The angle of inclination is θ.",
+                options: ["Option A", "Option B", "Option C", "Option D"]
+            },
+            {
+                text: "A particle is thrown vertically upward with a speed of 20 m/s. How high will it rise? (Take g = 10 m/s²).",
+                options: ["10 m", "20 m", "30 m", "40 m"]
+            },
+            {
+                text: "The displacement of a particle executing simple harmonic motion is given by x = 10 cos(πt). What is the amplitude of the motion?",
+                options: ["5 m", "10 m", "15 m", "20 m"]
+            },
+            {
+                text: "A car moving with a speed of 30 m/s applies brakes and comes to rest in 5 seconds. What is the retardation?",
+                options: ["6 m/s²", "5 m/s²", "4 m/s²", "3 m/s²"]
+            },
+            {
+                text: "Two resistors of 4Ω and 6Ω are connected in series. What is the equivalent resistance?",
+                options: ["2Ω", "10Ω", "24Ω", "1.5Ω"]
+            },
+            {
+                text: "A 220 V AC supply is connected to a 50Ω resistor. What is the power dissipated?",
+                options: ["484 W", "968 W", "1056 W", "1224 W"]
+            },
+            {
+                text: "An object is placed 10 cm in front of a concave mirror with a focal length of 15 cm. What is the nature of the image formed?",
+                options: ["Real and inverted", "Virtual and erect", "Real and erect", "Virtual and inverted"]
+            },
+            {
+                text: "What is the escape velocity on the surface of the Earth? (Take g = 9.8 m/s² and radius of Earth = 6400 km).",
+                options: ["11.2 km/s", "9.8 km/s", "7.9 km/s", "5.6 km/s"]
+            },
+            {
+                text: "The energy of a photon is 3.3 × 10^-19 J. What is its wavelength? (Take h = 6.6 × 10^-34 Js and c = 3 × 10^8 m/s).",
+                options: ["300 nm", "400 nm", "500 nm", "600 nm"]
+            },
+            {
+                text: "A capacitor of 10 µF is charged to a potential of 100 V. What is the energy stored in the capacitor?",
+                options: ["0.05 J", "0.1 J", "0.2 J", "0.5 J"]
+            }
+        ];
+
+        function startTimer() {
+            const timerElement = document.getElementById('timer');
+
+            timer = setInterval(() => {
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds} minutes left`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timer);
+                    alert('Time is up!');
+                }
+
+                timeRemaining--;
+            }, 1000);
+        }
+
+        function loadNextQuestion() {
+            if ([3, 4, 8].includes(currentQuestion)) {
+                alert("Check your connection, try again. Your answer is not saved.");
+                return;
+            }
+
+            if (currentQuestion < questions.length) {
+                currentQuestion++;
+                updateQuestion();
+            } else {
+                alert('This is the last question.');
+            }
+        }
+
+        function loadPreviousQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                updateQuestion();
+            } else {
+                alert('This is the first question.');
+            }
+        }
+
+        function updateQuestion() {
+            const questionHeader = document.querySelector('.question-header');
+            const questionText = document.querySelector('.container form div p');
+            const optionsContainer = document.querySelector('.options');
+
+            // Update the question number and content
+            questionHeader.textContent = `Question No ${currentQuestion}`;
+            questionText.innerHTML = `<strong>Q${currentQuestion}:</strong> ${questions[currentQuestion - 1].text}`;
+
+            // Update the options
+            optionsContainer.innerHTML = '';
+            questions[currentQuestion - 1].options.forEach((option, index) => {
+                const optionElement = document.createElement('label');
+                optionElement.innerHTML = `<input type="radio" name="q${currentQuestion}" value="${String.fromCharCode(97 + index)}"> ${option}`;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function clearResponse() {
+            const options = document.querySelectorAll('.options input');
+            options.forEach(option => option.checked = false);
+        }
+
+        window.onload = () => {
+            startTimer();
+            updateQuestion();
+        };
+    </script>
+</head>
+<body>
+    <div class="header">
+        <!-- Logo and Title -->
+        <div style="display: flex; align-items: center;">
+            <img src="Screenshot_2024-03-08_at_8.44.18_PM-removebg-preview.png" alt="Logo" class="logo"> <!-- Replace with your logo's path -->
+            <span class="title">Test from Soham Warade</span>
+        </div>
+        <div class="timer" id="timer">29:41 minutes left</div>
+    </div>
+
+    <div class="container">
+        <div class="question-header">Question No 1</div>
+
+        <div class="instructions">
+            <p>This section contains <strong>10 questions</strong>. Please read each question carefully and attempt it before moving to the next.</p>
+        </div>
+
+        <form>
+            <div>
+                <p><strong>Q1:</strong> A solid sphere of mass M and radius R rolls down an inclined plane without slipping. The angle of inclination is θ.</p>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="a"> Option A</label>
+                    <label><input type="radio" name="q1" value="b"> Option B</label>
+                    <label><input type="radio" name="q1" value="c"> Option C</label>
+                    <label><input type="radio" name="q1" value="d"> Option D</label>
+                </div>
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button type="button" class="prev" onclick="loadPreviousQuestion()">Previous</button>
+            <button type="button" class="review" onclick="alert('Marked for review. Proceed to the next question.')">Mark for Review & Next</button>
+            <button type="button" class="clear" onclick="clearResponse()">Clear Response</button>
+            <button type="button" class="save" onclick="loadNextQuestion()">Save & Next</button>
+        </div>
+    </div>
+</body>
+</html>
